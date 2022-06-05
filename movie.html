@@ -8,13 +8,13 @@
     }
     #container {
       margin: auto;
-      width: 500px;
-      height: 500px;
+      width: 1280px;
+      height: 720px;
       position: relative;
     }
     #canvas {
-      width: 500px;
-      height: 500px;
+      width: 1280px;
+      height: 720px;
       position: absolute;
     }
     #legend {
@@ -33,7 +33,7 @@
 </head>
 <body>
   <div id="container">
-    <canvas id="canvas" width="500" height="500"></canvas>
+    <canvas id="canvas" width="1280" height="720"></canvas>
     <div id="legend">
       <div id="types"></div>
       <div id="year"></div>
@@ -54,14 +54,14 @@
       // This is also CCS
       'J1772COMBO': '#88f',
       'TESLA': '#f44',
-       'CHADEMO': '#8f8'
+      'CHADEMO': '#8f8'
     }));
 
-    const offsets = new Map(Object.entries({
-      'CHADEMO': 0,
-      'J1772': 0,
-      'J1772COMBO': 0,
-      'TESLA': 0
+    const radii = new Map(Object.entries({
+      'CHADEMO': 2,
+      'J1772': 2,
+      'J1772COMBO': 4,
+      'TESLA': 3
     }));
 
     const labels = new Map(Object.entries({
@@ -116,7 +116,7 @@
     }
 
     ctx.fillStyle = 'black';
-    ctx.fillRect(0, 0, 500, 500);
+    ctx.fillRect(0, 0, 1280, 720);
 
     for (const feature of usa.features) {
       ctx.strokeStyle = 'white';
@@ -149,16 +149,18 @@
         index++;
         for (const type of (next.ev_connector_types || [])) {
           const color = colors.get(type);
-          const offset = offsets.get(type);
+          const radius = radii.get(type);
           if (color) {
-            ctx.fillStyle = color;
+            ctx.strokeStyle = color;
             console.log();
             // var scale = pv.Geo.scale(albers(23, -96, 29.5, 45.5))
             //    .range({ x: -365, y: -375 }, { x: 1200, y: 1200 });
             // const x = (next.longitude - minLongitude) * 500 / (maxLongitude - minLongitude);
             // const y = 500 - ((next.latitude - minLatitude) * 500 / (maxLongitude - minLongitude));
             const { x, y } = projectAndScale(next.longitude, next.latitude);
-            ctx.fillRect(x + offset, y, 2, 2);
+            ctx.beginPath();
+            ctx.arc(x, y, radius, 0, 2 * Math.PI);
+            ctx.stroke();
           }
         }
       }
@@ -167,8 +169,8 @@
 
     function scale({ x, y }) {
       return {
-        x: x * 600 + 250,
-        y: 500 - (y * 600 + 250 - 100)
+        x: x * 1400 + 640,
+        y: 720 - y * 1400
       };
     }
 
