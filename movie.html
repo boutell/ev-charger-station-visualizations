@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>CHAdeMO: the movie</title>
+  <style>
+    body {
+      font-family: Helvetica;
+    }
+    #container {
+      margin: auto;
+      width: 500px;
+      height: 500px;
+      position: relative;
+    }
+    #canvas {
+      width: 500px;
+      height: 500px;
+      position: absolute;
+    }
+    #legend {
+      position: absolute;
+      left: 16px;
+      bottom: 16px;
+      color: white;
+      background-color: black;
+      font-size: 16px;
+    }
+    #year {
+      margin-top: 1em;
+      font-size: 24px;
+    }
+  </style>
+</head>
+<body>
+  <div id="container">
+    <canvas id="canvas" width="500" height="500"></canvas>
+    <div id="legend">
+      <div id="types"></div>
+      <div id="year"></div>
+    </div>
+  </div>
+  <script src="https://unpkg.com/dayjs@1.8.21/dayjs.min.js"></script>
+  <script src="./albers.js"></script>
+  <script src="./stations.js"></script>
+  <script src="./usa.js"></script>
+  <script>
+  (() => {
+    let stations = window.data.fuel_stations;
+
+    // Colors I chose for the interesting types
+
+    const colors = new Map(Object.entries({
+      // 'J1772': 'white',
+      // This is also CCS
+      'J1772COMBO': '#88f',
+      'TESLA': '#f44',
+       'CHADEMO': '#8f8'
+    }));
+
+    const offsets = new Map(Object.entries({
+      'CHADEMO': 0,
+      'J1772': 0,
+      'J1772COMBO': 0,
+      'TESLA': 0
+    }));
+
+    const labels = new Map(Object.entries({
+      'CHADEMO': 'CHADeMO (Leaf)',
+      'J1772': 'L2 (slow)',
+      'TESLA': 'Tesla',
+      'J1772COMBO': 'CCS (most others)'
+    }));
+
+    // Sort the stations by opening date
+
+    stations.sort((a, b) => {
+      if (a.open_date < b.open_date) {
+        return -1;
+      } else if (a.open_date > b.open_date) {
+        return 1;
+      } else {
+        return 0;
+      }
+    });
+
+    // stations = stations.filter(station => (station.ev_connector_types || []).includes('CHADEMO') && station.open_date > '2008'); #}
+    stations = stations.filter(station => station.open_date >= '2010');
+
+    // const minLatitude = Math.min(...stations.map(station => station.latitude));
+    // const maxLatitude = Math.max(...stations.map(station => station.latitude));
+    // const minLongitude = Math.min(...stations.map(station => station.longitude));
+    // const maxLongitude = Math.max(...stations.map(station => station.longitude));
+
+    // Continental US
+    const minLongitude = -124.848974;
+    const maxLongitude = -66.885444;
+    const minLatitude = 24.396308;
+    const maxLatitude = 49.384358;
+
+    const projection = albers();
+    let date = dayjs(stations[0].open_date);
+    console.log(date.format('YYYY-MM-DD'));
+    let index = 0;
+    let last = Date.now();
+
+    const canvas = document.getElementById('canvas');
+    const types = document.getElementById('types');
+    const year = document.getElementById('year');
+    const ctx = canvas.getContext('2d');
+
+    for (const [ type, color ] of colors.entries()) {
+      const div = document.createElement('div');
+      div.innerText = labels.get(type);
+      div.style.color = color;
+      types.appendChild(div);
+    }
+
+    ctx.fillStyle = 'black';
+    ctx.fillRect(0, 0, 500, 500);
+
+    for (const feature of usa.features) {
+      ctx.strokeStyle = 'white';
+      ctx.beginPath();
+      for (coordinate of feature.geometry.coordinates) {
+        const { x, y } = projectAndScale(coordinate[0], coordinate[1]);
+        ctx.lineTo(x, y);
+      }
+      ctx.stroke();        
+    }
+
+    requestAnimationFrame(update);
+
+    function update() {
+      const now = Date.now();
+      const elapsed = now - last;
+      last = now;
+      date = date.add(1, 'day');
+      const stringDate = date.format('YYYY-MM-DD');
+      year.innerText = stringDate;
+      while (true) {
+        const next = stations[index];
+        if (!next) {
+          console.log('ran out of stations');
+          return;
+        }
+        if (next.open_date > stringDate) {
+          break;
+        }
+        index++;
+        for (const type of (next.ev_connector_types || [])) {
+          const color = colors.get(type);
+          const offset = offsets.get(type);
+          if (color) {
+            ctx.fillStyle = color;
+            console.log();
+            // var scale = pv.Geo.scale(albers(23, -96, 29.5, 45.5))
+            //    .range({ x: -365, y: -375 }, { x: 1200, y: 1200 });
+            // const x = (next.longitude - minLongitude) * 500 / (maxLongitude - minLongitude);
+            // const y = 500 - ((next.latitude - minLatitude) * 500 / (maxLongitude - minLongitude));
+            const { x, y } = projectAndScale(next.longitude, next.latitude);
+            ctx.fillRect(x + offset, y, 2, 2);
+          }
+        }
+      }
+      requestAnimationFrame(update);
+    }
+
+    function scale({ x, y }) {
+      return {
+        x: x * 600 + 250,
+        y: 500 - (y * 600 + 250 - 100)
+      };
+    }
+
+    function projectAndScale(longitude, latitude) {
+      return scale(projection.project(longitude, latitude));
+    }
+  })();
+  </script>
+</body>
+</html>
+
