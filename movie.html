@@ -37,7 +37,8 @@
   <script src="./usa.js"></script>
   <script>
   (() => {
-    let stations = window.data.fuel_stations;
+    // Don't let nulls trash the sort
+    let stations = window.data.fuel_stations.filter(station => !!station.open_date);
 
     // Colors I chose for the interesting types
 
@@ -75,9 +76,6 @@
       }
     });
 
-    // stations = stations.filter(station => (station.ev_connector_types || []).includes('CHADEMO') && station.open_date > '2008'); #}
-    stations = stations.filter(station => station.open_date >= '2010');
-
     // const minLatitude = Math.min(...stations.map(station => station.latitude));
     // const maxLatitude = Math.max(...stations.map(station => station.latitude));
     // const minLongitude = Math.min(...stations.map(station => station.longitude));
@@ -90,8 +88,7 @@
     const maxLatitude = 49.384358;
 
     const projection = albers();
-    let date = dayjs(stations[0].open_date);
-    console.log(date.format('YYYY-MM-DD'));
+    let date = dayjs('2010-01-01');
     let index = 0;
     let last = Date.now();
     let mediaRecorder;
@@ -126,10 +123,8 @@
       while (true) {
         const next = stations[index];
         if (!next) {
-          console.log('ran out of stations');
           if (!type) {
             const types = [...colors.keys()];
-            console.log(types);
             for (let i = 0; (i < types.length); i++) {
               setTimeout(() => update(types[i]), (i + 1) * 5000);
             }
