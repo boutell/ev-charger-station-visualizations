@@ -26,10 +26,18 @@ In supported browsers a `.webm` video file will download itself at the end of th
 
 This is a simple visualization of the U.S. Department of Energy Alternative Fuels Data Center data for all major types of EV stations in the continental U.S., based on the `open_date` field. Only stations with an `open_date` are plotted. The display begins on January 1st, 2010. The data and the outline map are plotted according to the Albers Equal Area Conic projection familiar to most Americans (thanks to [Tom Carden](https://gist.github.com/RandomEtc) for the code snippet). The United States outline map data is from the United States Census Cartographic Boundary Files, formatted in GeoJSON by [Eric Celeste](https://eric.clst.org/tech/usgeojson/). Data is rendered into an HTML5 `canvas` element. The video is captured within the browser using the HTML5 `MediaRecorder` interface. Thanks to [Jim Fisher](https://jameshfisher.com/2020/03/13/how-to-record-a-canvas-to-video/) for sharing the `MediaRecorder` logic to capture a canvas visualization.
 
-## Building the CHAdeMO table
+## CHAdeMO by year
 
 As an aside, Leaf owners like myself may be interested in seeing that new CHAdeMO stations specifically are still rolling out. To generate simple table of CHAdeMO station rollouts by year at the terminal prompt, run:
 
 ```bash
 npm run chademo-table
+```
+
+## List of new CHAdeMO locations
+
+To view a state-by-state list of new CHAdeMO locations in a date range, use:
+
+```bash
+node app chademo-by-state --start=2022-06-01 --end=2022-06-30
 ```
