@@ -1,0 +1,4 @@
+User-agent: *
+Sitemap: https://www.plugshare.com/sitemap_new_index.xml
+Sitemap: https://www.plugshare.com/sitemap_directories.xml
+Sitemap: https://www.plugshare.com/sitemap_maps.xml

@@ -7,6 +7,7 @@ const types = new Set();
 const stations = data.fuel_stations.filter(station => (station.ev_connector_types || []).includes('CHADEMO'));
 
 const yearCounts = {};
+const monthCounts = {};
 
 let lastDate;
 
@@ -15,6 +16,12 @@ for (const station of stations) {
   if ((!lastDate) || (date > lastDate)) {
     lastDate = date;
   }
+  const month = (station.open_date || '').substring(0, 7);
+  if (month) {
+    monthCounts[month] = monthCounts[month] || 0;
+    monthCounts[month]++;
+  }
+
   const year = (station.open_date || '').substring(0, 4);
   if (year) {
     yearCounts[year] = yearCounts[year] || 0;
@@ -25,7 +32,9 @@ for (const station of stations) {
 let unknown = stations.reduce((a, station) => a + station.open_date ? 0 : 1, 0);
 const years = Object.keys(yearCounts);
 years.sort();
-const results = [
+const months = Object.keys(monthCounts);
+months.sort();
+let results = [
   [
     'Year',
     'Opened',
@@ -44,4 +53,15 @@ results.push([ 'Unknown', unknown, '' ]);
 
 console.log(table(results));
 
-console.log(`Most recent station: ${lastDate}`);
+console.log('\nBy Month\n');
+results = [
+  [
+    'Month',
+    'Opened'
+  ]
+];
+for (const month of months) {
+  results.push([ month, monthCounts[month] ]);
+}
+
+console.log(table(results));

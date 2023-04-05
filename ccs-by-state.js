@@ -4,7 +4,7 @@ const argv = require('boring')();
 const data = require('./stations.json');
 
 const stations = data.fuel_stations.filter(station =>
-  ((station.ev_connector_types || []).includes('CHADEMO')) &&
+  ((station.ev_connector_types || []).includes('J1772COMBO')) &&
   (station.open_date >= argv.start) &&
   (station.open_date <= argv.end) &&
   // 1000 bogus re-reported stations on this date
