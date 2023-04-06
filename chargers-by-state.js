@@ -3,8 +3,14 @@ const dayjs = require('dayjs');
 const argv = require('boring')();
 const data = require('./stations.json');
 
+const type = argv.type;
+if (!type) {
+  console.error('--type required: CHADEMO, J1772, J1772COMBO');
+  process.exit(1);
+}
+
 const stations = data.fuel_stations.filter(station =>
-  ((station.ev_connector_types || []).includes('CHADEMO')) &&
+  ((station.ev_connector_types || []).includes(type)) &&
   (station.open_date >= argv.start) &&
   (station.open_date <= argv.end) &&
   // 1000 bogus re-reported stations on this date
