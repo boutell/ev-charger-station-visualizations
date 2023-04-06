@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "movie": "node json-to-js && open movie.html",
-    "chademo-table": "node chademo-table"
+    "chademo-table": "node chademo-table",
+    "update-data": "cd ../ev-charger-newsletter && node download-data.mjs && cd ../ev-charger-station-visualizations && cp ../ev-charger-newsletter/data/stations.json stations.json"
   },
   "author": "",
   "license": "ISC",
