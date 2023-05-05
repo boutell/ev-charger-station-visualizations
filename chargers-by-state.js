@@ -33,7 +33,7 @@ const stateNames = [...byState.keys()];
 
 stateNames.sort();
 
-let n = 0;
+let total = 0;
 
 for (const state of stateNames) {
   const stations = byState.get(state);
@@ -53,12 +53,6 @@ for (const state of stateNames) {
   let lastName = null;
   let count = 0;
   for (const station of stations) {
-<<<<<<< HEAD
-    console.log(station.station_name);
-    console.log(station.street_address);
-    console.log(`${station.city}, ${station.state} ${station.zip}\n`);
-    n++;
-=======
     const address = `${station.street_address}\n${station.city}, ${station.state} ${station.zip}`;
     if (lastAddress && (address !== lastAddress)) {
       emit();
@@ -68,7 +62,6 @@ for (const state of stateNames) {
     lastName = station.station_name;
     count++;
     total++;
->>>>>>> b8ced03 (display total count per location, hold on to some old data for analysis)
   }
   if (count) {
     emit();
@@ -82,4 +75,4 @@ for (const state of stateNames) {
 }
 
 console.log('');
-console.log(`Total: ${n}`);
+console.log(`Total: ${total}`);
