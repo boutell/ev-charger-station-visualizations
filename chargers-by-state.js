@@ -2,7 +2,6 @@ const { table } = require('table');
 const dayjs = require('dayjs');
 const argv = require('boring')();
 const data = require('./stations.json');
-
 const type = argv.type;
 if (!type) {
   console.error('--type required: CHADEMO, J1772, J1772COMBO');
@@ -16,7 +15,6 @@ const stations = data.fuel_stations.filter(station =>
   // 1000 bogus re-reported stations on this date
   (station.open_date !== '2022-09-21')
 );
-
 const byState = new Map();
 
 for (const station of stations) {
