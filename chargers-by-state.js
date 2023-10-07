@@ -17,7 +17,13 @@ const stations = data.fuel_stations.filter(station =>
 );
 const byState = new Map();
 
+const networks = {};
+
 for (const station of stations) {
+  if (!networks[station.ev_network]) {
+    networks[station.ev_network] = 0;
+  }
+  networks[station.ev_network]++;
   station.sortAddress =`${station.state} ${station.city} ${station.zip} ${station.street_address}`;
   let localStations = byState.get(station.state);
   if (!localStations) {
@@ -32,6 +38,7 @@ const stateNames = [...byState.keys()];
 stateNames.sort();
 
 let total = 0;
+let totalChargePoints = 0;
 
 for (const state of stateNames) {
   const stations = byState.get(state);
@@ -58,8 +65,13 @@ for (const state of stateNames) {
     }
     lastAddress = address;    
     lastName = station.station_name;
-    count++;
+    if (type === 'CHADEMO') {
+      count++;
+    } else {
+      count += station.ev_dc_fast_num || 1;
+    }
     total++;
+    totalChargePoints += count;
   }
   if (count) {
     emit();
@@ -73,4 +85,6 @@ for (const state of stateNames) {
 }
 
 console.log('');
-console.log(`Total: ${total}`);
+console.log(`Total Stations: ${total}`);
+console.log(`Total Chargepoints: ${totalChargePoints}`);
+// console.log(networks);
