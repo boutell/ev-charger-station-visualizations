@@ -9,7 +9,7 @@ if (!type) {
 }
 
 const stations = data.fuel_stations.filter(station =>
-  ((station.ev_connector_types || []).includes(type)) &&
+  filterByType(station.ev_connector_types || []) &&
   (station.open_date >= argv.start) &&
   (station.open_date <= argv.end) &&
   // 1000 bogus re-reported stations on this date
@@ -88,3 +88,8 @@ console.log('');
 console.log(`Total Stations: ${total}`);
 console.log(`Total Chargepoints: ${totalChargePoints}`);
 // console.log(networks);
+
+function filterByType(types) {
+  const requireTypes = type.includes('+') ? type.split('+') : [ type ];
+  return !requireTypes.find(type => !types.includes(type));
+}
