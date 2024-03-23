@@ -8,14 +8,14 @@
     "movie": "node json-to-js && open movie.html",
     "chademo-table": "node chademo-table",
     "monthly-download": "cd ../ev-charger-newsletter && node download-data.mjs && cd ../ev-charger-station-visualizations && cp ../ev-charger-newsletter/data/stations.json stations.json",
-    "monthly-reports": "echo \"CCS Results\" && echo && node chargers-by-state --type=J1772COMBO && echo && echo \"CHAdeMO Results\" && echo && node chargers-by-state --type=CHADEMO",
+    "monthly-reports": "echo \"CCS Results\" && echo && node chargers-by-state --type=J1772COMBO --previous-month && echo && echo \"CHAdeMO Results\" && echo && node chargers-by-state --type=CHADEMO --previous-month",
     "monthly": "npm run monthly-download && npm run monthly-reports"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "boring": "^1.1.1",
-    "dayjs": "^1.11.2",
+    "dayjs": "^1.11.10",
     "fast-xml-parser": "^4.0.8",
     "node-fetch": "^3.2.6",
     "table": "^6.8.0"

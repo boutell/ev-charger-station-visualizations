@@ -3,9 +3,22 @@ const dayjs = require('dayjs');
 const argv = require('boring')();
 const data = require('./stations.json');
 const type = argv.type;
+const states = require('./states.js');
+
 if (!type) {
   console.error('--type required: CHADEMO, J1772, J1772COMBO');
   process.exit(1);
+}
+
+if (argv['previous-month']) {
+  const date = new Date();
+  date.setMonth(date.getMonth() - 1);
+  date.setDate(1);
+  argv.start = dayjs(date).format('YYYY-MM-DD');
+  date.setMonth(date.getMonth() + 1);
+  date.setDate(0);
+  argv.end = dayjs(date).format('YYYY-MM-DD');
+  console.log(argv.start, argv.end);
 }
 
 const stations = data.fuel_stations.filter(station =>
@@ -65,13 +78,15 @@ for (const state of stateNames) {
     }
     lastAddress = address;    
     lastName = station.station_name;
-    if (type === 'CHADEMO') {
-      count++;
-    } else {
-      count += station.ev_dc_fast_num || 1;
+    if (Object.hasOwn(states, state)) {
+      if (type === 'CHADEMO') {
+        count++;
+      } else {
+        count += station.ev_dc_fast_num || 1;
+      }
+      total++;
+      totalChargePoints += count;
     }
-    total++;
-    totalChargePoints += count;
   }
   if (count) {
     emit();
