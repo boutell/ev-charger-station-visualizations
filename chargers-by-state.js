@@ -78,15 +78,17 @@ for (const state of stateNames) {
     }
     lastAddress = address;    
     lastName = station.station_name;
-    if (Object.hasOwn(states, state)) {
-      if (type === 'CHADEMO') {
-        count++;
-      } else {
-        count += station.ev_dc_fast_num || 1;
-      }
-      total++;
-      totalChargePoints += count;
+    let cp;
+    if (type === 'CHADEMO') {
+      cp = 1;
+    } else {
+      cp = station.ev_dc_fast_num || 1;
     }
+    if (Object.hasOwn(states, state)) {
+      total++;
+      totalChargePoints += cp;
+    }
+    count += cp;
   }
   if (count) {
     emit();
