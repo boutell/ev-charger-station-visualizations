@@ -1,10 +1,18 @@
 const { table } = require('table');
 const dayjs = require('dayjs');
 const data = require('./stations.json');
+const argv = require('boring')();
+
+const type = argv.type;
+
+if (!type) {
+  console.error('--type required: CHADEMO, J1772, J1772COMBO');
+  process.exit(1);
+}
 
 const types = new Set();
 
-const stations = data.fuel_stations.filter(station => (station.ev_connector_types || []).includes('CHADEMO'));
+const stations = data.fuel_stations.filter(station => (station.ev_connector_types || []).includes(type));
 
 const yearCounts = {};
 const monthCounts = {};
@@ -51,7 +59,11 @@ for (const year of years) {
 }
 results.push([ 'Unknown', unknown, '' ]);
 
-console.log(table(results));
+if (argv.format === 'csv') {
+  console.log(results.map(row => row.join(',')).join('\n'));
+} else {
+  console.log(table(results));
+}
 
 console.log('\nBy Month\n');
 results = [
