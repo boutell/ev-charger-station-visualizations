@@ -8,7 +8,7 @@
     "movie": "node json-to-js && open movie.html",
     "chademo-table": "node chademo-table",
     "monthly-download": "cd ../ev-charger-newsletter && node download-data.mjs && cd ../ev-charger-station-visualizations && cp ../ev-charger-newsletter/data/stations.json stations.json",
-    "monthly-reports": "echo \"CCS Results\" && echo && node chargers-by-state --type=J1772COMBO --previous-month && echo && echo \"CHAdeMO Results\" && echo && node chargers-by-state --type=CHADEMO --previous-month",
+    "monthly-reports": "./monthly-reports",
     "monthly": "npm run monthly-download && npm run monthly-reports"
   },
   "author": "",

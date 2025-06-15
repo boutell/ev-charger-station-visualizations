@@ -1,0 +1,7 @@
+#!/bin/bash
+
+echo \"CCS Results: Last Month\" && echo && node chargers-by-state --type=J1772COMBO --months-ago=1 && echo "**********" &&
+echo \"CCS Results: 13 Months Ago\" && echo && node chargers-by-state --type=J1772COMBO --months-ago=13 && echo "============" &&
+echo \"CHAdeMO Results: Last Month\" && echo && node chargers-by-state --type=CHADEMO --months-ago=1 && echo "**********" &&
+echo \"CHAdeMO Results: 13 Months Ago\" && echo && node chargers-by-state --type=CHADEMO --months-ago=13 && echo "============" &&
+echo "Done."

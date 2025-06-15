@@ -10,9 +10,11 @@ if (!type) {
   process.exit(1);
 }
 
-if (argv['previous-month']) {
+const monthsAgo = argv['months-ago'] ? parseInt(argv['months-ago']) : false;
+
+if (monthsAgo !== false) {
   const date = new Date();
-  date.setMonth(date.getMonth() - 1);
+  date.setMonth(date.getMonth() - monthsAgo);
   date.setDate(1);
   argv.start = dayjs(date).format('YYYY-MM-DD');
   date.setMonth(date.getMonth() + 1);
